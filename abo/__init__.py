@@ -1,1 +1,1 @@
-from generator import ABO
+from .generator import ABO

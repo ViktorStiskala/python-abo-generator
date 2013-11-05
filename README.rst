@@ -6,7 +6,7 @@ python-abo-generator
 
 ABO banking format generator.
 
-Currently supports only "CSOB" compatible format
+Currently supports only "CSOB" compatible format.
 
 Specification sources: http://www.fio.cz/docs/cz/struktura-abo.pdf and http://www.equabank.cz/files/doc/13-format-abo.pdf (available only in czech).
 
