@@ -44,6 +44,20 @@ class ABO:
         if interval_start > 999 or interval_start < 1 or interval_end > 999 or interval_end < 1 or interval_end < interval_start:
             raise ValueError('Wrong interval specified')
 
+    def add_transaction(self, account_number, amount, variable_symbol, constant_symbol=None, specific_symbol=None, message=None):
+        account_number = self._parse_account_number(account_number)
+        transaction = ABOTransaction(account_number, amount, variable_symbol, constant_symbol, specific_symbol, message)
+
+        self._transactions.append(transaction)
+
+    def get_content(self):
+        if self._content is None:
+            self._generate()
+        return self._content
+
+    def save(self, file_handle):
+        file_handle.write(self.get_content())
+
     def _parse_account_number(self, account_number):
         m = re.match(r'^((?P<prefix>\d+)-)?(?P<number>\d+)/(?P<bank>\d{4})$', account_number)
         if not m:
@@ -75,7 +89,7 @@ class ABO:
         if len(str(total_amount)) > 15:
             raise ValueError('Total amount too high for use in ABO format')
 
-        return '2 {prefix:0<6}-{account:0<10} {total_amount:015d} {due_date}\r\n'.format(
+        return '2 {prefix:0>6}-{account:0>10} {total_amount:015d} {due_date}\r\n'.format(
             prefix=self._account_number['prefix'],
             account=self._account_number['number'],
             total_amount=total_amount,
@@ -95,17 +109,3 @@ class ABO:
             self._content += transaction.render()
 
         self._content += self._create_footer()
-
-    def add_transaction(self, account_number, amount, variable_symbol, constant_symbol=None, specific_symbol=None, message=None):
-        account_number = self._parse_account_number(account_number)
-        transaction = ABOTransaction(account_number, amount, variable_symbol, constant_symbol, specific_symbol, message)
-
-        self._transactions.append(transaction)
-
-    def get_content(self):
-        if self._content is None:
-            self._generate()
-        return self._content
-
-    def save(self, file_handle):
-        file_handle.write(self.get_content())
